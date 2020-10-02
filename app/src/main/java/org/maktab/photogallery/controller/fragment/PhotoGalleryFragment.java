@@ -1,21 +1,24 @@
 package org.maktab.photogallery.controller.fragment;
 
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.TextView;
-
 import org.maktab.photogallery.R;
 import org.maktab.photogallery.model.GalleryItem;
+import org.maktab.photogallery.network.FlickrFetcher;
 import org.maktab.photogallery.repository.PhotoRepository;
 
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -26,6 +29,7 @@ import java.util.List;
 public class PhotoGalleryFragment extends Fragment {
 
     public static final int SPAN_COUNT = 3;
+    public static final String TAG = "PGF";
     private RecyclerView mRecyclerView;
     private PhotoAdapter mAdapter;
 
@@ -46,6 +50,9 @@ public class PhotoGalleryFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mRepository = PhotoRepository.getInstance();
+
+        FetchItemTasks fetchItemTasks = new FetchItemTasks();
+        fetchItemTasks.execute();
     }
 
     @Override
@@ -56,7 +63,7 @@ public class PhotoGalleryFragment extends Fragment {
 
         findViews(view);
         initViews();
-        setupAdapter();
+//        setupAdapter(null);
 
         return view;
     }
@@ -69,10 +76,8 @@ public class PhotoGalleryFragment extends Fragment {
         mRecyclerView.setLayoutManager(new GridLayoutManager(getContext(), SPAN_COUNT));
     }
 
-    private void setupAdapter() {
-        List<GalleryItem> items = mRepository.getItems();
+    private void setupAdapter(List<GalleryItem> items) {
         mAdapter = new PhotoAdapter(items);
-
         mRecyclerView.setAdapter(mAdapter);
     }
 
@@ -124,6 +129,21 @@ public class PhotoGalleryFragment extends Fragment {
         @Override
         public int getItemCount() {
             return mItems.size();
+        }
+    }
+
+    private class FetchItemTasks extends AsyncTask<String, Void, List<GalleryItem>> {
+
+        @Override
+        protected List<GalleryItem> doInBackground(String... params) {
+            List<GalleryItem> items = mRepository.getItems();
+
+            return items;
+        }
+
+        @Override
+        protected void onPostExecute(List<GalleryItem> items) {
+            setupAdapter(items);
         }
     }
 }
