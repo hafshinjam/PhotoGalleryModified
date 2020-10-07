@@ -12,15 +12,18 @@ public class FlickrFetcher {
 
     public static final String BASE_PATH = "https://www.flickr.com/services/rest";
     public static final String METHOD_RECENT = "flickr.photos.getRecent";
+    public static final String METHOD_POPULAR = "flickr.photos.getPopular";
     public static final String API_KEY = "79b5c28546b0c0fd5a0bdc65ac9eab18";
+    private static final String USER_ID = "34427466731@N01";
 
     public static String generateUrl() {
         Uri uri = Uri.parse(BASE_PATH)
                 .buildUpon()
-                .appendQueryParameter("method", METHOD_RECENT)
+                .appendQueryParameter("method", METHOD_POPULAR)
                 .appendQueryParameter("api_key", API_KEY)
                 .appendQueryParameter("format", "json")
                 .appendQueryParameter("extras", "url_s")
+                .appendQueryParameter("user_id", USER_ID)
                 .appendQueryParameter("nojsoncallback", "1")
                 .build();
 
