@@ -2,7 +2,6 @@ package org.maktab.photogallery.controller.fragment;
 
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,10 +14,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import org.maktab.photogallery.R;
 import org.maktab.photogallery.model.GalleryItem;
-import org.maktab.photogallery.network.FlickrFetcher;
 import org.maktab.photogallery.repository.PhotoRepository;
+import org.maktab.photogallery.services.ThumbnailDownloader;
 
-import java.io.IOException;
 import java.util.List;
 
 /**
@@ -34,6 +32,8 @@ public class PhotoGalleryFragment extends Fragment {
     private PhotoAdapter mAdapter;
 
     private PhotoRepository mRepository;
+
+    private ThumbnailDownloader mThumbnailDownloader;
 
     public PhotoGalleryFragment() {
         // Required empty public constructor
@@ -51,8 +51,21 @@ public class PhotoGalleryFragment extends Fragment {
         super.onCreate(savedInstanceState);
         mRepository = PhotoRepository.getInstance();
 
+        mThumbnailDownloader = new ThumbnailDownloader();
+        //start the thread inside message loop
+        mThumbnailDownloader.start();
+        //start the looper inside message loop
+        mThumbnailDownloader.getLooper();
+
         FetchItemTasks fetchItemTasks = new FetchItemTasks();
         fetchItemTasks.execute();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+
+        mThumbnailDownloader.quit();
     }
 
     @Override
@@ -94,7 +107,10 @@ public class PhotoGalleryFragment extends Fragment {
 
         public void bindPhoto(GalleryItem item) {
             mItem = item;
-            mTextViewTitle.setText(mItem.getCaption());
+//            mTextViewTitle.setText(mItem.getCaption());
+
+            //TODO: put a message in ThumbnailDownloader queue
+            mThumbnailDownloader.queueThumbnailMessage(item.getUrl());
         }
     }
 

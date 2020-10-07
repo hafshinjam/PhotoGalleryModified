@@ -38,7 +38,7 @@ public class FlickrFetcher {
                 throw new IOException(connection.getResponseMessage() + " with url: " + urlString);
 
             ByteArrayOutputStream output = new ByteArrayOutputStream();
-            byte[] buffer = new byte[1024];
+            byte[] buffer = new byte[10 * 1024];
             int readCount = 0;
             while ((readCount = input.read(buffer)) != -1) {
                 output.write(buffer, 0, readCount);

@@ -9,7 +9,6 @@ import org.maktab.photogallery.controller.fragment.PhotoGalleryFragment;
 import org.maktab.photogallery.model.GalleryItem;
 import org.maktab.photogallery.network.FlickrFetcher;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 

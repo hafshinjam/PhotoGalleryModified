@@ -1,7 +1,5 @@
 package org.maktab.photogallery.model;
 
-import java.util.Date;
-
 public class GalleryItem {
     private String mId;
     private String mCaption;
