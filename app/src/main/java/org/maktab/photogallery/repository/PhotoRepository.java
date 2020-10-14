@@ -2,17 +2,16 @@ package org.maktab.photogallery.repository;
 
 import android.util.Log;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
+import com.google.gson.reflect.TypeToken;
+
 import org.maktab.photogallery.controller.fragment.PhotoGalleryFragment;
 import org.maktab.photogallery.model.GalleryItem;
-import org.maktab.photogallery.model.network.FllickrResponse;
-import org.maktab.photogallery.model.network.PhotoItem;
 import org.maktab.photogallery.network.FlickrService;
+import org.maktab.photogallery.network.GetGalleryItemsDeserializer;
 import org.maktab.photogallery.network.RetrofitInstance;
 
 import java.io.IOException;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,15 +34,18 @@ public class PhotoRepository {
     }
 
     private PhotoRepository() {
-        Retrofit retrofit = RetrofitInstance.getInstance();
+        Type type = new TypeToken<List<GalleryItem>>(){}.getType();
+        Object typeAdapter = new GetGalleryItemsDeserializer();
+
+        Retrofit retrofit = RetrofitInstance.getInstance(type, typeAdapter);
         mFlickrService = retrofit.create(FlickrService.class);
     }
 
-    public List<PhotoItem> getItems() {
-        Call<FllickrResponse> call = mFlickrService.listItems(RetrofitInstance.QUERY_OPTIONS);
+    public List<GalleryItem> getItems() {
+        Call<List<GalleryItem>> call = mFlickrService.listItems(RetrofitInstance.QUERY_OPTIONS);
         try {
-            Response<FllickrResponse> response = call.execute();
-            return response.body().getPhotos().getPhoto();
+            Response<List<GalleryItem>> response = call.execute();
+            return response.body();
         } catch (IOException e) {
             Log.e(PhotoGalleryFragment.TAG, e.getMessage(), e);
         }

@@ -1,7 +1,8 @@
 package org.maktab.photogallery.model.network;
 
-import java.util.List;
 import com.google.gson.annotations.SerializedName;
+
+import java.util.List;
 
 public class Photos{
 

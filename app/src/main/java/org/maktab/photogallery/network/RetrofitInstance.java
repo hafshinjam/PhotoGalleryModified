@@ -1,8 +1,17 @@
 package org.maktab.photogallery.network;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
+
+import org.maktab.photogallery.model.GalleryItem;
+
+import java.lang.reflect.Type;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import retrofit2.Converter;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
@@ -23,12 +32,20 @@ public class RetrofitInstance {
         put("nojsoncallback", "1");
     }};
 
-    public static Retrofit getInstance() {
+    public static Retrofit getInstance(Type type, Object typeAdapter) {
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(BASE_PATH)
-                .addConverterFactory(GsonConverterFactory.create())
+                .addConverterFactory(createGsonConverter(type, typeAdapter))
                 .build();
 
         return retrofit;
+    }
+
+    public static Converter.Factory createGsonConverter(Type type, Object typeAdapter) {
+        GsonBuilder builder = new GsonBuilder()
+                .registerTypeAdapter(type, typeAdapter);
+
+        Gson gson = builder.create();
+        return GsonConverterFactory.create(gson);
     }
 }
