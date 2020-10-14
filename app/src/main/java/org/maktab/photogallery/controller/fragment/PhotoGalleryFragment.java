@@ -3,22 +3,21 @@ package org.maktab.photogallery.controller.fragment;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.squareup.picasso.Picasso;
+
 import org.maktab.photogallery.R;
 import org.maktab.photogallery.model.GalleryItem;
 import org.maktab.photogallery.repository.PhotoRepository;
-import org.maktab.photogallery.services.ThumbnailDownloader;
 
 import java.util.List;
 
@@ -33,11 +32,8 @@ public class PhotoGalleryFragment extends Fragment {
     public static final String TAG = "PGF";
     private RecyclerView mRecyclerView;
     private PhotoAdapter mAdapter;
-    private Handler mResponseHandler;
 
     private PhotoRepository mRepository;
-
-    private ThumbnailDownloader<PhotoHolder> mThumbnailDownloader;
 
     public PhotoGalleryFragment() {
         // Required empty public constructor
@@ -55,35 +51,8 @@ public class PhotoGalleryFragment extends Fragment {
         super.onCreate(savedInstanceState);
         mRepository = PhotoRepository.getInstance();
 
-        setupBackgroundMessageLoop();
-
         FetchItemTasks fetchItemTasks = new FetchItemTasks();
         fetchItemTasks.execute();
-    }
-
-    private void setupBackgroundMessageLoop() {
-        mResponseHandler = new Handler();
-
-        mThumbnailDownloader = new ThumbnailDownloader(mResponseHandler);
-        //start the thread inside message loop
-        mThumbnailDownloader.start();
-        //start the looper inside message loop
-        mThumbnailDownloader.getLooper();
-
-        mThumbnailDownloader.setListener(
-                new ThumbnailDownloader.ThumbnailDownloaderListener<PhotoHolder>() {
-            @Override
-            public void onDownloadCompleted(PhotoHolder holder, Bitmap bitmap) {
-                holder.bindBitmap(bitmap);
-            }
-        });
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-
-        mThumbnailDownloader.quit();
     }
 
     @Override
@@ -94,7 +63,6 @@ public class PhotoGalleryFragment extends Fragment {
 
         findViews(view);
         initViews();
-//        setupAdapter(null);
 
         return view;
     }
@@ -126,13 +94,10 @@ public class PhotoGalleryFragment extends Fragment {
         public void bindPhoto(GalleryItem item) {
             mItem = item;
 
-            //place holder
-            mImageView.setImageResource(R.mipmap.ic_android);
-            mThumbnailDownloader.queueThumbnailMessage(this, item.getUrl());
-        }
-
-        public void bindBitmap(Bitmap bitmap) {
-            mImageView.setImageBitmap(bitmap);
+            Picasso.get()
+                    .load(mItem.getUrl())
+                    .placeholder(R.mipmap.ic_android)
+                    .into(mImageView);
         }
     }
 

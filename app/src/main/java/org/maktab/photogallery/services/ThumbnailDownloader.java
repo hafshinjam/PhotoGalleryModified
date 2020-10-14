@@ -52,29 +52,33 @@ public class ThumbnailDownloader<T> extends HandlerThread {
                     final T target = (T) msg.obj;
                     final String photoUrl = mTargetUrl.get(target);
 
-                    if (photoUrl == null)
-                        return;
-
-                    try {
-                        byte[] photoBytes = new FlickrFetcher().getBytes(photoUrl);
-                        final Bitmap bitmap = BitmapFactory
-                                .decodeByteArray(photoBytes, 0, photoBytes.length);
-
-                        mResponseHandler.post(new Runnable() {
-                            @Override
-                            public void run() {
-                                if (mTargetUrl.get(target) != photoUrl)
-                                    return;
-
-                                mListener.onDownloadCompleted(target, bitmap);
-                            }
-                        });
-                    } catch (IOException e) {
-                        Log.e(TAG, e.getMessage(), e);
-                    }
+                    ThumbnailDownloader.this.handleMessage(target, photoUrl);
                 }
             }
         };
+    }
+
+    private void handleMessage(final T target, final String photoUrl) {
+        if (photoUrl == null)
+            return;
+
+        try {
+            byte[] photoBytes = new FlickrFetcher().getBytes(photoUrl);
+            final Bitmap bitmap = BitmapFactory
+                    .decodeByteArray(photoBytes, 0, photoBytes.length);
+
+            mResponseHandler.post(new Runnable() {
+                @Override
+                public void run() {
+                    if (mTargetUrl.get(target) != photoUrl)
+                        return;
+
+                    mListener.onDownloadCompleted(target, bitmap);
+                }
+            });
+        } catch (IOException e) {
+            Log.e(TAG, e.getMessage(), e);
+        }
     }
 
     public void queueThumbnailMessage(T target, String url) {
