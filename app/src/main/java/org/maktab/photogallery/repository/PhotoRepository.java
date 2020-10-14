@@ -7,15 +7,23 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.maktab.photogallery.controller.fragment.PhotoGalleryFragment;
 import org.maktab.photogallery.model.GalleryItem;
-import org.maktab.photogallery.network.FlickrFetcher;
+import org.maktab.photogallery.network.FlickrService;
+import org.maktab.photogallery.network.RetrofitInstance;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Response;
+import retrofit2.Retrofit;
 
 public class PhotoRepository {
 
     private static PhotoRepository sInstance;
     private List<GalleryItem> mItems = new ArrayList<>();
+
+    private FlickrService mFlickrService;
 
     public static PhotoRepository getInstance() {
         if (sInstance == null)
@@ -24,8 +32,22 @@ public class PhotoRepository {
         return sInstance;
     }
 
+    private PhotoRepository() {
+        Retrofit retrofit = RetrofitInstance.getInstance();
+        mFlickrService = retrofit.create(FlickrService.class);
+    }
+
     public List<GalleryItem> getItems() {
-        String url = FlickrFetcher.generateUrl();
+        Call<List<GalleryItem>> call = mFlickrService.listItems(RetrofitInstance.QUERY_OPTIONS);
+        try {
+            Response<List<GalleryItem>> response = call.execute();
+            return response.body();
+        } catch (IOException e) {
+            Log.e(PhotoGalleryFragment.TAG, e.getMessage(), e);
+        }
+        return null;
+
+        /*String url = FlickrFetcher.generateUrl();
 
         FlickrFetcher flickrFetcher = new FlickrFetcher();
         String jsonBodyString = null;
@@ -37,15 +59,11 @@ public class PhotoRepository {
         } catch (Exception e) {
             Log.e(PhotoGalleryFragment.TAG, e.getMessage(), e);
         }
-        return mItems;
+        return mItems;*/
     }
 
     public void setItems(List<GalleryItem> items) {
         mItems = items;
-    }
-
-    private PhotoRepository() {
-
     }
 
     private List<GalleryItem> parseJson(JSONObject jsonBody) throws JSONException {
