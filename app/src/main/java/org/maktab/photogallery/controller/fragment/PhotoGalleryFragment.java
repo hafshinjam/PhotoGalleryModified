@@ -50,8 +50,17 @@ public class PhotoGalleryFragment extends Fragment {
         super.onCreate(savedInstanceState);
         mRepository = PhotoRepository.getInstance();
 
-        FetchItemTasks fetchItemTasks = new FetchItemTasks();
-        fetchItemTasks.execute();
+        mRepository.setListeners(new PhotoRepository.Listeners() {
+            @Override
+            public void onRetrofitResponse(List<GalleryItem> items) {
+                setupAdapter(items);
+            }
+        });
+
+        mRepository.getItemsAsync();
+
+        /*FetchItemTasks fetchItemTasks = new FetchItemTasks();
+        fetchItemTasks.execute();*/
     }
 
     @Override
@@ -135,7 +144,7 @@ public class PhotoGalleryFragment extends Fragment {
         }
     }
 
-    private class FetchItemTasks extends AsyncTask<String, Void, List<GalleryItem>> {
+    /*private class FetchItemTasks extends AsyncTask<String, Void, List<GalleryItem>> {
 
         @Override
         protected List<GalleryItem> doInBackground(String... params) {
@@ -148,5 +157,5 @@ public class PhotoGalleryFragment extends Fragment {
         protected void onPostExecute(List<GalleryItem> items) {
             setupAdapter(items);
         }
-    }
+    }*/
 }
