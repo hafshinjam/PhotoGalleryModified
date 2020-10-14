@@ -23,8 +23,6 @@ public class PhotoRepository {
     private static PhotoRepository sInstance;
 
     private FlickrService mFlickrService;
-//    private Listeners mListeners;
-
     private MutableLiveData<List<GalleryItem>> mItemsLiveData = new MutableLiveData<>();
 
     public static PhotoRepository getInstance() {
@@ -41,14 +39,6 @@ public class PhotoRepository {
         Retrofit retrofit = RetrofitInstance.getInstance(type, typeAdapter);
         mFlickrService = retrofit.create(FlickrService.class);
     }
-
-    /*public Listeners getListeners() {
-        return mListeners;
-    }*/
-
-    /*public void setListeners(Listeners listeners) {
-        mListeners = listeners;
-    }*/
 
     public MutableLiveData<List<GalleryItem>> getItemsLiveData() {
         Call<List<GalleryItem>> call = mFlickrService.listItems(NetworkParams.QUERY_OPTIONS);
@@ -70,33 +60,4 @@ public class PhotoRepository {
     public void setItemsLiveData(MutableLiveData<List<GalleryItem>> itemsLiveData) {
         mItemsLiveData = itemsLiveData;
     }
-
-    /*
-    public void getItemsAsync() {
-        Call<List<GalleryItem>> call = mFlickrService.listItems(NetworkParams.QUERY_OPTIONS);
-        call.enqueue(new Callback<List<GalleryItem>>() {
-            @Override
-            public void onResponse(Call<List<GalleryItem>> call, Response<List<GalleryItem>> response) {
-                List<GalleryItem> items = response.body();
-                mListeners.onRetrofitResponse(items);
-            }
-
-            @Override
-            public void onFailure(Call<List<GalleryItem>> call, Throwable t) {
-
-            }
-        });
-    }*/
-
-    /*
-    public List<GalleryItem> getItemsSync() {
-        Call<List<GalleryItem>> call = mFlickrService.listItems(NetworkParams.QUERY_OPTIONS);
-        try {
-            Response<List<GalleryItem>> response = call.execute();
-            return response.body();
-        } catch (IOException e) {
-            Log.e(PhotoGalleryFragment.TAG, e.getMessage(), e);
-        }
-        return null;
-    }*/
 }
