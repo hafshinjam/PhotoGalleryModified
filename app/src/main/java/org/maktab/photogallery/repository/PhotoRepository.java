@@ -7,6 +7,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.maktab.photogallery.controller.fragment.PhotoGalleryFragment;
 import org.maktab.photogallery.model.GalleryItem;
+import org.maktab.photogallery.model.network.FllickrResponse;
+import org.maktab.photogallery.model.network.PhotoItem;
 import org.maktab.photogallery.network.FlickrService;
 import org.maktab.photogallery.network.RetrofitInstance;
 
@@ -37,11 +39,11 @@ public class PhotoRepository {
         mFlickrService = retrofit.create(FlickrService.class);
     }
 
-    public List<GalleryItem> getItems() {
-        Call<List<GalleryItem>> call = mFlickrService.listItems(RetrofitInstance.QUERY_OPTIONS);
+    public List<PhotoItem> getItems() {
+        Call<FllickrResponse> call = mFlickrService.listItems(RetrofitInstance.QUERY_OPTIONS);
         try {
-            Response<List<GalleryItem>> response = call.execute();
-            return response.body();
+            Response<FllickrResponse> response = call.execute();
+            return response.body().getPhotos().getPhoto();
         } catch (IOException e) {
             Log.e(PhotoGalleryFragment.TAG, e.getMessage(), e);
         }
@@ -62,11 +64,11 @@ public class PhotoRepository {
         return mItems;*/
     }
 
-    public void setItems(List<GalleryItem> items) {
+    /*public void setItems(List<GalleryItem> items) {
         mItems = items;
-    }
+    }*/
 
-    private List<GalleryItem> parseJson(JSONObject jsonBody) throws JSONException {
+    /*private List<GalleryItem> parseJson(JSONObject jsonBody) throws JSONException {
         List<GalleryItem> items = new ArrayList<>();
 
         JSONObject photosObject = jsonBody.getJSONObject("photos");
@@ -85,5 +87,5 @@ public class PhotoRepository {
         }
 
         return items;
-    }
+    }*/
 }

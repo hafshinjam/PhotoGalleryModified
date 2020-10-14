@@ -1,6 +1,5 @@
 package org.maktab.photogallery.controller.fragment;
 
-import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -16,7 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.squareup.picasso.Picasso;
 
 import org.maktab.photogallery.R;
-import org.maktab.photogallery.model.GalleryItem;
+import org.maktab.photogallery.model.network.PhotoItem;
 import org.maktab.photogallery.repository.PhotoRepository;
 
 import java.util.List;
@@ -75,7 +74,7 @@ public class PhotoGalleryFragment extends Fragment {
         mRecyclerView.setLayoutManager(new GridLayoutManager(getContext(), SPAN_COUNT));
     }
 
-    private void setupAdapter(List<GalleryItem> items) {
+    private void setupAdapter(List<PhotoItem> items) {
         mAdapter = new PhotoAdapter(items);
         mRecyclerView.setAdapter(mAdapter);
     }
@@ -83,7 +82,7 @@ public class PhotoGalleryFragment extends Fragment {
     private class PhotoHolder extends RecyclerView.ViewHolder {
 
         private ImageView mImageView;
-        private GalleryItem mItem;
+        private PhotoItem mItem;
 
         public PhotoHolder(@NonNull View itemView) {
             super(itemView);
@@ -91,11 +90,11 @@ public class PhotoGalleryFragment extends Fragment {
             mImageView = itemView.findViewById(R.id.imageview_photo);
         }
 
-        public void bindPhoto(GalleryItem item) {
+        public void bindPhoto(PhotoItem item) {
             mItem = item;
 
             Picasso.get()
-                    .load(mItem.getUrl())
+                    .load(mItem.getUrlS())
                     .placeholder(R.mipmap.ic_android)
                     .into(mImageView);
         }
@@ -103,17 +102,17 @@ public class PhotoGalleryFragment extends Fragment {
 
     private class PhotoAdapter extends RecyclerView.Adapter<PhotoHolder> {
 
-        private List<GalleryItem> mItems;
+        private List<PhotoItem> mItems;
 
-        public List<GalleryItem> getItems() {
+        public List<PhotoItem> getItems() {
             return mItems;
         }
 
-        public void setItems(List<GalleryItem> items) {
+        public void setItems(List<PhotoItem> items) {
             mItems = items;
         }
 
-        public PhotoAdapter(List<GalleryItem> items) {
+        public PhotoAdapter(List<PhotoItem> items) {
             mItems = items;
         }
 
@@ -136,17 +135,17 @@ public class PhotoGalleryFragment extends Fragment {
         }
     }
 
-    private class FetchItemTasks extends AsyncTask<String, Void, List<GalleryItem>> {
+    private class FetchItemTasks extends AsyncTask<String, Void, List<PhotoItem>> {
 
         @Override
-        protected List<GalleryItem> doInBackground(String... params) {
-            List<GalleryItem> items = mRepository.getItems();
+        protected List<PhotoItem> doInBackground(String... params) {
+            List<PhotoItem> items = mRepository.getItems();
 
             return items;
         }
 
         @Override
-        protected void onPostExecute(List<GalleryItem> items) {
+        protected void onPostExecute(List<PhotoItem> items) {
             setupAdapter(items);
         }
     }
