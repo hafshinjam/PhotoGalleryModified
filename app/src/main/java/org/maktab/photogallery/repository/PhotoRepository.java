@@ -4,7 +4,7 @@ import android.util.Log;
 
 import com.google.gson.reflect.TypeToken;
 
-import org.maktab.photogallery.controller.fragment.PhotoGalleryFragment;
+import org.maktab.photogallery.view.fragment.PhotoGalleryFragment;
 import org.maktab.photogallery.model.GalleryItem;
 import org.maktab.photogallery.network.FlickrService;
 import org.maktab.photogallery.network.GetGalleryItemsDeserializer;
@@ -20,7 +20,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 
-public class PhotoRepository {
+public class PhotoRepository implements IRepository {
 
     private static PhotoRepository sInstance;
 //    private List<GalleryItem> mItems = new ArrayList<>();
@@ -51,6 +51,7 @@ public class PhotoRepository {
         mListeners = listeners;
     }
 
+    @Override
     public void getItemsAsync() {
         Call<List<GalleryItem>> call = mFlickrService.listItems(NetworkParams.QUERY_OPTIONS);
         call.enqueue(new Callback<List<GalleryItem>>() {
@@ -67,6 +68,7 @@ public class PhotoRepository {
         });
     }
 
+    @Override
     public List<GalleryItem> getItemsSync() {
         Call<List<GalleryItem>> call = mFlickrService.listItems(NetworkParams.QUERY_OPTIONS);
         try {
