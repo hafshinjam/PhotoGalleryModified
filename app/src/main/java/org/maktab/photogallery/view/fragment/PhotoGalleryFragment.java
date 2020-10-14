@@ -7,6 +7,9 @@ import android.view.ViewGroup;
 
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.GridLayoutManager;
 
 import org.maktab.photogallery.R;
@@ -14,6 +17,7 @@ import org.maktab.photogallery.adapters.PhotoAdapter;
 import org.maktab.photogallery.databinding.FragmentPhotoGalleryBinding;
 import org.maktab.photogallery.model.GalleryItem;
 import org.maktab.photogallery.repository.PhotoRepository;
+import org.maktab.photogallery.viewmodel.PhotoGalleryViewModel;
 
 import java.util.List;
 
@@ -29,7 +33,7 @@ public class PhotoGalleryFragment extends Fragment {
     private FragmentPhotoGalleryBinding mFragmentPhotoGalleryBinding;
     private PhotoAdapter mAdapter;
 
-    private PhotoRepository mRepository;
+    private PhotoGalleryViewModel mViewModel;
 
     public PhotoGalleryFragment() {
         // Required empty public constructor
@@ -45,16 +49,29 @@ public class PhotoGalleryFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mRepository = PhotoRepository.getInstance();
 
-        mRepository.setListeners(new PhotoRepository.Listeners() {
+        mViewModel = new ViewModelProvider(this).get(PhotoGalleryViewModel.class);
+
+        registerObservers();
+
+        /*mRepository.setListeners(new PhotoRepository.Listeners() {
             @Override
             public void onRetrofitResponse(List<GalleryItem> items) {
                 setupAdapter(items);
             }
         });
 
-        mRepository.getItemsAsync();
+        mRepository.getItemsAsync();*/
+    }
+
+    private void registerObservers() {
+        //this observer is declared in main thread
+        mViewModel.getItemsLiveData().observe(this, new Observer<List<GalleryItem>>() {
+            @Override
+            public void onChanged(List<GalleryItem> items) {
+                setupAdapter(items);
+            }
+        });
     }
 
     @Override
