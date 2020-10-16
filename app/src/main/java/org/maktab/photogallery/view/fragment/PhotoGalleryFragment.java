@@ -86,7 +86,8 @@ public class PhotoGalleryFragment extends Fragment {
         searchView.setOnSearchClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                String query = mViewModel.getSearchQueryFromPref();
+                searchView.setQuery(query, false);
             }
         });
 
@@ -94,7 +95,7 @@ public class PhotoGalleryFragment extends Fragment {
             @Override
             public boolean onQueryTextSubmit(String query) {
                 mViewModel.fetchSearchItemsLiveDataApi(query);
-                mViewModel.saveQueryInPref(query);
+                mViewModel.saveSearchQueryInPref(query);
                 return true;
             }
 
@@ -109,6 +110,8 @@ public class PhotoGalleryFragment extends Fragment {
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
             case R.id.menu_item_clear:
+                mViewModel.saveSearchQueryInPref(null);
+                mViewModel.fetchItems();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

@@ -50,7 +50,11 @@ public class PhotoGalleryViewModel extends AndroidViewModel {
             fetchSearchItemsLiveDataApi(query);
     }
 
-    public void saveQueryInPref(String query) {
+    public String getSearchQueryFromPref() {
+        return QueryPreferences.getSearchQuery(getApplication());
+    }
+
+    public void saveSearchQueryInPref(String query) {
         QueryPreferences.setSearchQuery(getApplication(), query);
     }
 }
