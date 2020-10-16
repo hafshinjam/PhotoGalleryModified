@@ -8,6 +8,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
 import org.maktab.photogallery.R;
+import org.maktab.photogallery.databinding.ActivitySingleFragmentBinding;
 
 /**
  * If we have activity that has only one fullscreen fragement we must
@@ -17,12 +18,14 @@ public abstract class SingleFragmentActivity extends AppCompatActivity {
 
     public static final String FRAGMENT_TAG = "FragmentActivity";
 
+    ActivitySingleFragmentBinding mBinding;
+
     public abstract Fragment createFragment();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        DataBindingUtil.setContentView(this, R.layout.activity_single_fragment);
+        mBinding = DataBindingUtil.setContentView(this, R.layout.activity_single_fragment);
 
         FragmentManager fragmentManager = getSupportFragmentManager();
 
