@@ -1,4 +1,4 @@
-package org.maktab.photogallery.model.network;
+package org.maktab.photogallery.data.model.network;
 
 import com.google.gson.annotations.SerializedName;
 

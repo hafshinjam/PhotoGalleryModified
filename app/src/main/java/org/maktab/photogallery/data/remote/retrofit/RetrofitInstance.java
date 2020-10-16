@@ -1,7 +1,9 @@
-package org.maktab.photogallery.network;
+package org.maktab.photogallery.data.remote.retrofit;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+
+import org.maktab.photogallery.data.remote.NetworkParams;
 
 import java.lang.reflect.Type;
 
