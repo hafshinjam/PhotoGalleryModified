@@ -1,13 +1,16 @@
 package org.maktab.photogallery.viewmodel;
 
+import android.app.Activity;
 import android.app.Application;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 
+import org.maktab.photogallery.R;
 import org.maktab.photogallery.data.model.GalleryItem;
 import org.maktab.photogallery.data.repository.PhotoRepository;
+import org.maktab.photogallery.services.PollService;
 import org.maktab.photogallery.utilities.QueryPreferences;
 
 import java.util.List;
@@ -56,5 +59,25 @@ public class PhotoGalleryViewModel extends AndroidViewModel {
 
     public void saveSearchQueryInPref(String query) {
         QueryPreferences.setSearchQuery(getApplication(), query);
+    }
+
+    public void startPollService() {
+        getApplication().startService(PollService.newIntent(getApplication()));
+    }
+
+    public void schedulePollService(Activity activity) {
+        PollService.setServiceAlarm(activity, true);
+    }
+
+    public void togglePollService(Activity activity) {
+        boolean isServiceOn = PollService.isServiceOn(activity);
+        PollService.setServiceAlarm(activity, !isServiceOn);
+    }
+
+    public int getTogglePollingTitle(Activity activity) {
+        if (PollService.isServiceOn(activity))
+            return R.string.stop_polling;
+        else
+            return R.string.start_polling;
     }
 }

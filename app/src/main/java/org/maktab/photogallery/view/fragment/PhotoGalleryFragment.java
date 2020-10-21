@@ -80,9 +80,12 @@ public class PhotoGalleryFragment extends Fragment {
         super.onCreateOptionsMenu(menu, inflater);
 
         inflater.inflate(R.menu.fragment_photo_gallery, menu);
+
+        MenuItem togglePollingItem = menu.findItem(R.id.toggle_polling);
         MenuItem searchViewMenuItem = menu.findItem(R.id.menu_item_search_view);
         SearchView searchView = (SearchView) searchViewMenuItem.getActionView();
 
+        togglePollingItem.setTitle(mViewModel.getTogglePollingTitle(getActivity()));
         searchView.setOnSearchClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -112,6 +115,10 @@ public class PhotoGalleryFragment extends Fragment {
             case R.id.menu_item_clear:
                 mViewModel.saveSearchQueryInPref(null);
                 mViewModel.fetchItems();
+                return true;
+            case R.id.toggle_polling:
+                mViewModel.togglePollService(getActivity());
+                getActivity().invalidateOptionsMenu();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

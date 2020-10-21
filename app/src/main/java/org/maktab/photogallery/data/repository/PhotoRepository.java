@@ -1,5 +1,7 @@
 package org.maktab.photogallery.data.repository;
 
+import android.util.Log;
+
 import androidx.lifecycle.MutableLiveData;
 
 import com.google.gson.reflect.TypeToken;
@@ -10,7 +12,9 @@ import org.maktab.photogallery.data.remote.retrofit.FlickrService;
 import org.maktab.photogallery.data.remote.retrofit.GetGalleryItemsDeserializer;
 import org.maktab.photogallery.data.remote.retrofit.RetrofitInstance;
 
+import java.io.IOException;
 import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.List;
 
 import retrofit2.Call;
@@ -20,6 +24,7 @@ import retrofit2.Retrofit;
 
 public class PhotoRepository {
 
+    public static final String TAG = "PhotoRepository";
     private static PhotoRepository sInstance;
 
     private FlickrService mFlickrService;
@@ -81,5 +86,30 @@ public class PhotoRepository {
 
             }
         });
+    }
+
+    public List<GalleryItem> getPopularItemsSync() {
+        Call<List<GalleryItem>> call =
+                mFlickrService.listItems(NetworkParams.getPopularOptions());
+
+        return getGalleryItemsSync(call);
+    }
+
+    public List<GalleryItem> getSearchItemSync(String query) {
+        Call<List<GalleryItem>> call =
+                mFlickrService.listItems(NetworkParams.getSearchOptions(query));
+
+        return getGalleryItemsSync(call);
+    }
+
+    private List<GalleryItem> getGalleryItemsSync(Call<List<GalleryItem>> call) {
+        List<GalleryItem> items = new ArrayList<>();
+        try {
+            items = call.execute().body();
+        } catch (IOException e) {
+            Log.e(TAG, e.getMessage(), e);
+        } finally {
+            return items;
+        }
     }
 }
