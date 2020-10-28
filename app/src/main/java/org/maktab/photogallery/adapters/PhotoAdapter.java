@@ -1,50 +1,31 @@
 package org.maktab.photogallery.adapters;
 
-import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.databinding.DataBindingUtil;
-import androidx.fragment.app.FragmentActivity;
-import androidx.lifecycle.ViewModelProvider;
-import androidx.lifecycle.ViewModelStoreOwner;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.squareup.picasso.Picasso;
 
 import org.maktab.photogallery.R;
-import org.maktab.photogallery.data.model.GalleryItem;
 import org.maktab.photogallery.databinding.ListItemPhotoBinding;
-import org.maktab.photogallery.viewmodel.PhotoItemViewModel;
-
-import java.util.List;
+import org.maktab.photogallery.viewmodel.PhotoGalleryViewModel;
 
 public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.PhotoHolder> {
 
-    private Context mContext;
-    private ViewModelStoreOwner mViewModelStoreOwner;
-    private List<GalleryItem> mItems;
+    private PhotoGalleryViewModel mViewModel;
 
-    public List<GalleryItem> getItems() {
-        return mItems;
-    }
-
-    public void setItems(List<GalleryItem> items) {
-        mItems = items;
-    }
-
-    public PhotoAdapter(Context context, ViewModelStoreOwner owner, List<GalleryItem> items) {
-        mItems = items;
-        mContext = context.getApplicationContext();
-        mViewModelStoreOwner = owner;
+    public PhotoAdapter(PhotoGalleryViewModel viewModel) {
+        mViewModel = viewModel;
     }
 
     @NonNull
     @Override
     public PhotoHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         ListItemPhotoBinding listItemPhotoBinding = DataBindingUtil.inflate(
-                LayoutInflater.from(mContext),
+                LayoutInflater.from(mViewModel.getApplication()),
                 R.layout.list_item_photo,
                 parent,
                 false);
@@ -53,37 +34,29 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.PhotoHolder>
 
     @Override
     public void onBindViewHolder(@NonNull PhotoHolder holder, int position) {
-        holder.bindPhoto(mItems.get(position));
+        holder.bindPhoto(position);
     }
 
     @Override
     public int getItemCount() {
-        return mItems.size();
+        return mViewModel.getItems().size();
     }
 
     class PhotoHolder extends RecyclerView.ViewHolder {
 
         private ListItemPhotoBinding mListItemPhotoBinding;
-        private GalleryItem mItem;
 
         public PhotoHolder(ListItemPhotoBinding listItemPhotoBinding) {
             super(listItemPhotoBinding.getRoot());
             mListItemPhotoBinding = listItemPhotoBinding;
-
-            PhotoItemViewModel viewModel =
-                    new ViewModelProvider(mViewModelStoreOwner)
-                    .get(PhotoItemViewModel.class);
-
-            mListItemPhotoBinding.setViewModel(viewModel);
+            mListItemPhotoBinding.setViewModel(mViewModel);
         }
 
-        public void bindPhoto(GalleryItem item) {
-            mItem = item;
-            mListItemPhotoBinding.getViewModel().setGalleryItem(mItem);
-            mListItemPhotoBinding.executePendingBindings();
+        public void bindPhoto(int position) {
+            mListItemPhotoBinding.setPosition(position);
 
             Picasso.get()
-                    .load(mItem.getUrl())
+                    .load(mViewModel.getItems().get(position).getUrl())
                     .placeholder(R.mipmap.ic_android)
                     .into(mListItemPhotoBinding.imageviewPhoto);
         }
