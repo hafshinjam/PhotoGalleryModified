@@ -1,8 +1,6 @@
 package org.maktab.photogallery.viewmodel;
 
-import android.app.Activity;
 import android.app.Application;
-import android.os.Build;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
@@ -11,9 +9,8 @@ import androidx.lifecycle.LiveData;
 import org.maktab.photogallery.R;
 import org.maktab.photogallery.data.model.GalleryItem;
 import org.maktab.photogallery.data.repository.PhotoRepository;
-import org.maktab.photogallery.services.PollJobService;
-import org.maktab.photogallery.services.PollService;
 import org.maktab.photogallery.utilities.QueryPreferences;
+import org.maktab.photogallery.worker.PollWorker;
 
 import java.util.List;
 
@@ -63,16 +60,19 @@ public class PhotoGalleryViewModel extends AndroidViewModel {
         QueryPreferences.setSearchQuery(getApplication(), query);
     }
 
-    public void startPollService() {
+    /*public void startPollService() {
         getApplication().startService(PollService.newIntent(getApplication()));
     }
 
     public void schedulePollService(Activity activity) {
         PollService.setServiceAlarm(activity, true);
-    }
+    }*/
 
-    public void togglePollService(Activity activity) {
-        boolean isOn = isServiceOnOrScheduled(activity);
+    public void togglePollService() {
+        boolean isOn = PollWorker.isWorkScheduled(getApplication());
+        PollWorker.scheduleWork(getApplication(), !isOn);
+
+        /*boolean isOn = isServiceOnOrScheduled(activity);
 
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
             //schedule PollService in Alarm Manager
@@ -80,21 +80,26 @@ public class PhotoGalleryViewModel extends AndroidViewModel {
         } else {
             //scheduler PollJobService in Job Scheduler
             PollJobService.scheduleJob(activity, !isOn);
-        }
+        }*/
     }
 
-    public int getTogglePollingTitle(Activity activity) {
-        if (isServiceOnOrScheduled(activity))
+    public int getTogglePollingTitle() {
+        if (PollWorker.isWorkScheduled(getApplication()))
             return R.string.stop_polling;
         else
             return R.string.start_polling;
+
+        /*if (isServiceOnOrScheduled(activity))
+            return R.string.stop_polling;
+        else
+            return R.string.start_polling;*/
     }
 
-    public boolean isServiceOnOrScheduled(Activity activity) {
+    /*public boolean isServiceOnOrScheduled(Activity activity) {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
             return PollService.isServiceOn(activity);
         } else {
             return PollJobService.isJobScheduled(activity);
         }
-    }
+    }*/
 }

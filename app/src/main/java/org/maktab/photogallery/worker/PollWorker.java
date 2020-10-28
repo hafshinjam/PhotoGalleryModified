@@ -31,6 +31,8 @@ public class PollWorker extends Worker {
     @NonNull
     @Override
     public Result doWork() {
+        Log.d(TAG, "doWork");
+
         Services.pollFromServerAndNotify(getApplicationContext(), TAG);
         return Result.success();
     }
@@ -57,14 +59,14 @@ public class PollWorker extends Worker {
             Log.d(TAG, "cancel work");
             WorkManager
                     .getInstance(context)
-                    .cancelAllWorkByTag(WORK_TAG_POLL);
+                    .cancelUniqueWork(WORK_TAG_POLL);
         }
     }
 
     public static boolean isWorkScheduled(Context context) {
         try {
             WorkManager workManager = WorkManager.getInstance(context);
-            List<WorkInfo> workInfos = workManager.getWorkInfosByTag(WORK_TAG_POLL).get();
+            List<WorkInfo> workInfos = workManager.getWorkInfosForUniqueWork(WORK_TAG_POLL).get();
 
             for (WorkInfo workInfo: workInfos) {
                 if (workInfo.getState() == WorkInfo.State.ENQUEUED ||
