@@ -2,6 +2,7 @@ package org.maktab.photogallery.viewmodel;
 
 import android.app.Activity;
 import android.app.Application;
+import android.os.Build;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
@@ -10,6 +11,7 @@ import androidx.lifecycle.LiveData;
 import org.maktab.photogallery.R;
 import org.maktab.photogallery.data.model.GalleryItem;
 import org.maktab.photogallery.data.repository.PhotoRepository;
+import org.maktab.photogallery.services.PollJobService;
 import org.maktab.photogallery.services.PollService;
 import org.maktab.photogallery.utilities.QueryPreferences;
 
@@ -70,14 +72,29 @@ public class PhotoGalleryViewModel extends AndroidViewModel {
     }
 
     public void togglePollService(Activity activity) {
-        boolean isServiceOn = PollService.isServiceOn(activity);
-        PollService.setServiceAlarm(activity, !isServiceOn);
+        boolean isOn = isServiceOnOrScheduled(activity);
+
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+            //schedule PollService in Alarm Manager
+            PollService.setServiceAlarm(activity, !isOn);
+        } else {
+            //scheduler PollJobService in Job Scheduler
+            PollJobService.scheduleJob(activity, !isOn);
+        }
     }
 
     public int getTogglePollingTitle(Activity activity) {
-        if (PollService.isServiceOn(activity))
+        if (isServiceOnOrScheduled(activity))
             return R.string.stop_polling;
         else
             return R.string.start_polling;
+    }
+
+    public boolean isServiceOnOrScheduled(Activity activity) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+            return PollService.isServiceOn(activity);
+        } else {
+            return PollJobService.isJobScheduled(activity);
+        }
     }
 }
