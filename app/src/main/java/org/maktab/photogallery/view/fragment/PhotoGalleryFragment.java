@@ -148,7 +148,7 @@ public class PhotoGalleryFragment extends Fragment {
     }
 
     private void setupAdapter(List<GalleryItem> items) {
-        mAdapter = new PhotoAdapter(getContext(), items);
+        mAdapter = new PhotoAdapter(getContext(), this, items);
         mFragmentPhotoGalleryBinding.photoGalleryRecyclerview.setAdapter(mAdapter);
     }
 }
