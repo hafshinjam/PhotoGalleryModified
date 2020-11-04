@@ -3,6 +3,7 @@ package org.maktab.photogallery.utilities;
 import android.app.Notification;
 import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
 import android.util.Log;
 
 import androidx.core.app.NotificationCompat;
@@ -12,10 +13,20 @@ import org.maktab.photogallery.R;
 import org.maktab.photogallery.data.model.GalleryItem;
 import org.maktab.photogallery.data.repository.PhotoRepository;
 import org.maktab.photogallery.view.activity.PhotoGalleryActivity;
+import org.maktab.photogallery.worker.PollWorker;
 
 import java.util.List;
 
 public class Services {
+
+    public static final String ACTION_SHOW_NOTIFICATION =
+            "org.maktab.photogallery.SHOW_NOTIFICATION";
+    public static final String EXTRA_NOTIFICATION =
+            "org.maktab.photogallery.EXTRA_NOTIFICATION";
+    public static final String EXTRA_NOTIFICATION_ID =
+            "org.maktab.photogallery.EXTRA_NOTIFICATION_ID";
+    public static final String PERM_PRIVATE_NOTIFICATION =
+            "org.maktab.photogallery.PRIVATE_NOTIFICATION";
 
     private static final int REQUEST_CODE_NOTIFICATION = 1;
     private static final int NOTIFICATION_ID = 0;
@@ -40,8 +51,8 @@ public class Services {
         Log.d(tag, "lastResultId: " + lastResultId);
 
         if (!lastResultId.equals(lastResultIdPref)) {
-            //show notification
-            showNotification(context);
+//            showNotification(context);
+            sendNotificationEvent(context);
             Log.d(tag, "show notification");
         } else {
             Log.d(tag, "do nothing");
@@ -50,7 +61,7 @@ public class Services {
         QueryPreferences.setLastResultId(context, lastResultId);
     }
 
-    private static void showNotification(Context context) {
+    /*private static void showNotification(Context context) {
         String channelId = context.getResources().getString(R.string.channel_id);
         PendingIntent pendingIntent = PendingIntent.getActivity(
                 context,
@@ -68,5 +79,29 @@ public class Services {
 
         NotificationManagerCompat notificationManagerCompat = NotificationManagerCompat.from(context);
         notificationManagerCompat.notify(NOTIFICATION_ID, notification);
+    }*/
+
+    private static void sendNotificationEvent(Context context) {
+        Log.d(PollWorker.TAG, "sendNotificationEvent");
+
+        String channelId = context.getResources().getString(R.string.channel_id);
+        PendingIntent pendingIntent = PendingIntent.getActivity(
+                context,
+                REQUEST_CODE_NOTIFICATION,
+                PhotoGalleryActivity.newIntent(context),
+                0);
+
+        Notification notification = new NotificationCompat.Builder(context, channelId)
+                .setSmallIcon(android.R.drawable.ic_menu_report_image)
+                .setContentTitle(context.getResources().getString(R.string.new_pictures_title))
+                .setContentText(context.getResources().getString(R.string.new_pictures_text))
+                .setContentIntent(pendingIntent)
+                .setAutoCancel(true)
+                .build();
+
+        Intent intent = new Intent(ACTION_SHOW_NOTIFICATION);
+        intent.putExtra(EXTRA_NOTIFICATION, notification);
+        intent.putExtra(EXTRA_NOTIFICATION_ID, NOTIFICATION_ID);
+        context.sendBroadcast(intent, PERM_PRIVATE_NOTIFICATION);
     }
 }
