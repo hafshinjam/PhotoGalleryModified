@@ -1,5 +1,6 @@
 package org.maktab.photogallery.utilities;
 
+import android.app.Activity;
 import android.app.Notification;
 import android.app.PendingIntent;
 import android.content.Context;
@@ -102,6 +103,14 @@ public class Services {
         Intent intent = new Intent(ACTION_SHOW_NOTIFICATION);
         intent.putExtra(EXTRA_NOTIFICATION, notification);
         intent.putExtra(EXTRA_NOTIFICATION_ID, NOTIFICATION_ID);
-        context.sendBroadcast(intent, PERM_PRIVATE_NOTIFICATION);
+//        context.sendBroadcast(intent, PERM_PRIVATE_NOTIFICATION);
+        context.sendOrderedBroadcast(
+                intent,
+                PERM_PRIVATE_NOTIFICATION,
+                null,
+                null,
+                Activity.RESULT_OK,
+                null,
+                null);
     }
 }

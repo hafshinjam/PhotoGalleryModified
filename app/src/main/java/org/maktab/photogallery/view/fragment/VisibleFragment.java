@@ -1,5 +1,6 @@
 package org.maktab.photogallery.view.fragment;
 
+import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -20,6 +21,7 @@ public abstract class VisibleFragment extends Fragment {
 
         //register broadcast receiver
         IntentFilter intentFilter = new IntentFilter(Services.ACTION_SHOW_NOTIFICATION);
+        intentFilter.setPriority(0);
         getActivity().registerReceiver(
                 mOnNotificationReceived,
                 intentFilter,
@@ -39,6 +41,8 @@ public abstract class VisibleFragment extends Fragment {
         @Override
         public void onReceive(Context context, Intent intent) {
             Log.d(TAG, "Received boot broadcast intent: " + intent.getAction());
+
+            setResultCode(Activity.RESULT_CANCELED);
         }
     };
 }
