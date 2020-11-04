@@ -29,7 +29,7 @@ import java.util.List;
  * Use the {@link PhotoGalleryFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class PhotoGalleryFragment extends Fragment {
+public class PhotoGalleryFragment extends VisibleFragment {
 
     public static final int SPAN_COUNT = 3;
     public static final String TAG = "PGF";

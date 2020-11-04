@@ -23,9 +23,9 @@ import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
 
 public class PhotoGalleryViewModel extends AndroidViewModel {
 
-    private PhotoRepository mRepository;
-    private LiveData<List<GalleryItem>> mPopularItemsLiveData;
-    private LiveData<List<GalleryItem>> mSearchItemsLiveData;
+    private final PhotoRepository mRepository;
+    private final LiveData<List<GalleryItem>> mPopularItemsLiveData;
+    private final LiveData<List<GalleryItem>> mSearchItemsLiveData;
 
     public LiveData<List<GalleryItem>> getPopularItemsLiveData() {
         return mPopularItemsLiveData;

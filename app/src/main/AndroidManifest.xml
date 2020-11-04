@@ -21,7 +21,8 @@
         <receiver
             android:name=".receiver.NotificationReceiver"
             android:enabled="true"
-            android:exported="true">
+            android:exported="true"
+            android:permission="org.maktab.photogallery.PRIVATE_NOTIFICATION">
             <intent-filter>
                 <action android:name="org.maktab.photogallery.SHOW_NOTIFICATION" />
             </intent-filter>

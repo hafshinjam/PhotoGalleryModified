@@ -17,6 +17,7 @@ public class NotificationReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         Log.d(TAG, "Received boot broadcast intent: " + intent.getAction());
+        //check custom permission
 
         Notification notification = intent.getParcelableExtra(Services.EXTRA_NOTIFICATION);
         int notificationId = intent.getIntExtra(Services.EXTRA_NOTIFICATION_ID, 0);

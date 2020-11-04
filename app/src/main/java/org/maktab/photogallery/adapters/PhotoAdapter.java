@@ -15,7 +15,7 @@ import org.maktab.photogallery.viewmodel.PhotoGalleryViewModel;
 
 public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.PhotoHolder> {
 
-    private PhotoGalleryViewModel mViewModel;
+    private final PhotoGalleryViewModel mViewModel;
 
     public PhotoAdapter(PhotoGalleryViewModel viewModel) {
         mViewModel = viewModel;
@@ -44,7 +44,7 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.PhotoHolder>
 
     class PhotoHolder extends RecyclerView.ViewHolder {
 
-        private ListItemPhotoBinding mListItemPhotoBinding;
+        private final ListItemPhotoBinding mListItemPhotoBinding;
 
         public PhotoHolder(ListItemPhotoBinding listItemPhotoBinding) {
             super(listItemPhotoBinding.getRoot());
