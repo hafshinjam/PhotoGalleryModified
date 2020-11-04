@@ -1,15 +1,14 @@
 package org.maktab.photogallery.view.fragment;
 
-import android.app.Activity;
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
 import android.util.Log;
+import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
 
-import org.maktab.photogallery.utilities.Services;
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+import org.maktab.photogallery.eventbus.NotificationEvent;
 
 public abstract class VisibleFragment extends Fragment {
 
@@ -20,13 +19,7 @@ public abstract class VisibleFragment extends Fragment {
         super.onStart();
 
         //register broadcast receiver
-        IntentFilter intentFilter = new IntentFilter(Services.ACTION_SHOW_NOTIFICATION);
-        intentFilter.setPriority(0);
-        getActivity().registerReceiver(
-                mOnNotificationReceived,
-                intentFilter,
-                Services.PERM_PRIVATE_NOTIFICATION,
-                null);
+        EventBus.getDefault().register(this);
     }
 
     @Override
@@ -34,15 +27,13 @@ public abstract class VisibleFragment extends Fragment {
         super.onStop();
 
         //unregister broadcast receiver
-        getActivity().unregisterReceiver(mOnNotificationReceived);
+        EventBus.getDefault().unregister(this);
     }
 
-    private final BroadcastReceiver mOnNotificationReceived = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            Log.d(TAG, "Received boot broadcast intent: " + intent.getAction());
-
-            setResultCode(Activity.RESULT_CANCELED);
-        }
-    };
+    @Subscribe(threadMode = ThreadMode.POSTING, priority = 2)
+    public void onNotificationEvent(NotificationEvent notificationEvent) {
+        //cancel the notification
+        Log.d("EventBus", "VisibleFragment cancel notification");
+        EventBus.getDefault().cancelEventDelivery(notificationEvent);
+    }
 }

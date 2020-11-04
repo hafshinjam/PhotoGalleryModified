@@ -10,9 +10,11 @@ import android.util.Log;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 
+import org.greenrobot.eventbus.EventBus;
 import org.maktab.photogallery.R;
 import org.maktab.photogallery.data.model.GalleryItem;
 import org.maktab.photogallery.data.repository.PhotoRepository;
+import org.maktab.photogallery.eventbus.NotificationEvent;
 import org.maktab.photogallery.view.activity.PhotoGalleryActivity;
 import org.maktab.photogallery.worker.PollWorker;
 
@@ -52,9 +54,8 @@ public class Services {
         Log.d(tag, "lastResultId: " + lastResultId);
 
         if (!lastResultId.equals(lastResultIdPref)) {
-//            showNotification(context);
             sendNotificationEvent(context);
-            Log.d(tag, "show notification");
+            Log.d(tag, "send notification event");
         } else {
             Log.d(tag, "do nothing");
         }
@@ -62,7 +63,9 @@ public class Services {
         QueryPreferences.setLastResultId(context, lastResultId);
     }
 
-    /*private static void showNotification(Context context) {
+    private static void sendNotificationEvent(Context context) {
+        Log.d(PollWorker.TAG, "sendNotificationEvent");
+
         String channelId = context.getResources().getString(R.string.channel_id);
         PendingIntent pendingIntent = PendingIntent.getActivity(
                 context,
@@ -78,11 +81,11 @@ public class Services {
                 .setAutoCancel(true)
                 .build();
 
-        NotificationManagerCompat notificationManagerCompat = NotificationManagerCompat.from(context);
-        notificationManagerCompat.notify(NOTIFICATION_ID, notification);
-    }*/
+        NotificationEvent notificationEvent = new NotificationEvent(NOTIFICATION_ID, notification);
+        EventBus.getDefault().post(notificationEvent);
+    }
 
-    private static void sendNotificationEvent(Context context) {
+    /*private static void sendNotificationEvent(Context context) {
         Log.d(PollWorker.TAG, "sendNotificationEvent");
 
         String channelId = context.getResources().getString(R.string.channel_id);
@@ -112,5 +115,5 @@ public class Services {
                 Activity.RESULT_OK,
                 null,
                 null);
-    }
+    }*/
 }
