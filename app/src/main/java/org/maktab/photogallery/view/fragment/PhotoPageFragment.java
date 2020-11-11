@@ -1,22 +1,24 @@
 package org.maktab.photogallery.view.fragment;
 
+import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
-
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.databinding.DataBindingUtil;
-import androidx.fragment.app.Fragment;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebChromeClient;
-import android.webkit.WebResourceRequest;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
+import androidx.activity.OnBackPressedCallback;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.databinding.DataBindingUtil;
+import androidx.fragment.app.Fragment;
+
 import org.maktab.photogallery.R;
 import org.maktab.photogallery.databinding.FragmentPhotoPageBinding;
+
 
 public class PhotoPageFragment extends Fragment {
 
@@ -45,6 +47,21 @@ public class PhotoPageFragment extends Fragment {
     }
 
     @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        OnBackPressedCallback callback = new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+               if( mBinding.photoWebView.canGoBack())
+                   mBinding.photoWebView.goBack();
+               else
+                   getActivity().finish();
+            }
+        };
+        requireActivity().getOnBackPressedDispatcher().addCallback(this,callback);
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         mBinding = DataBindingUtil.inflate(
@@ -55,7 +72,18 @@ public class PhotoPageFragment extends Fragment {
 
         mBinding.photoPageProgressBar.setMax(100);
         mBinding.photoWebView.getSettings().setJavaScriptEnabled(true);
-
+    /*    mBinding.photoWebView.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                if (keyCode ==KeyEvent.KEYCODE_BACK){
+                    if (mBinding.photoWebView.canGoBack())
+                        mBinding.photoWebView.goBack();
+                    else
+                        getActivity().finish();
+                return true;}
+               else return onKey(v,keyCode,event);
+            }
+        });*/
         mBinding.photoWebView.setWebViewClient(new WebViewClient() {
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, String url) {

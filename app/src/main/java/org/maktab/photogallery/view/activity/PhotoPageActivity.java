@@ -3,9 +3,12 @@ package org.maktab.photogallery.view.activity;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Bundle;
+import android.webkit.WebView;
 
 import androidx.fragment.app.Fragment;
 
+import org.maktab.photogallery.R;
 import org.maktab.photogallery.view.fragment.PhotoPageFragment;
 
 public class PhotoPageActivity extends SingleFragmentActivity {
