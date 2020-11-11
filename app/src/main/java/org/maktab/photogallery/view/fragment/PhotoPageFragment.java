@@ -3,12 +3,14 @@ package org.maktab.photogallery.view.fragment;
 import android.net.Uri;
 import android.os.Bundle;
 
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.WebChromeClient;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -51,15 +53,35 @@ public class PhotoPageFragment extends Fragment {
                 container,
                 false);
 
+        mBinding.photoPageProgressBar.setMax(100);
         mBinding.photoWebView.getSettings().setJavaScriptEnabled(true);
 
         mBinding.photoWebView.setWebViewClient(new WebViewClient() {
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
-                view.loadUrl(url);
+//                view.loadUrl(url);
                 return false;
             }
         });
+
+        mBinding.photoWebView.setWebChromeClient(new WebChromeClient() {
+            @Override
+            public void onProgressChanged(WebView view, int newProgress) {
+                if (newProgress == 100) {
+                    mBinding.photoPageProgressBar.setVisibility(View.GONE);
+                } else {
+                    mBinding.photoPageProgressBar.setVisibility(View.VISIBLE);
+                    mBinding.photoPageProgressBar.setProgress(newProgress);
+                }
+            }
+
+            @Override
+            public void onReceivedTitle(WebView view, String title) {
+                AppCompatActivity activity = (AppCompatActivity) getActivity();
+                activity.getSupportActionBar().setSubtitle(title);
+            }
+        });
+
         mBinding.photoWebView.loadUrl(mPhotoUri.toString());
 
         return mBinding.getRoot();

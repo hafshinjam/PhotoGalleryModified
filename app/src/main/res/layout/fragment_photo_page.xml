@@ -7,11 +7,20 @@
         android:layout_width="match_parent"
         tools:context=".view.fragment.PhotoPageFragment">
 
+        <ProgressBar
+            android:id="@+id/photo_page_progress_bar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:visibility="gone"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:background="?attr/colorPrimary"/>
+
         <WebView
             android:id="@+id/photo_web_view"
             android:layout_alignParentBottom="true"
-            android:layout_alignParentTop="true"
             android:layout_height="wrap_content"
-            android:layout_width="match_parent" />
+            android:layout_width="match_parent"
+            android:layout_below="@id/photo_page_progress_bar"/>
     </RelativeLayout>
 </layout>
