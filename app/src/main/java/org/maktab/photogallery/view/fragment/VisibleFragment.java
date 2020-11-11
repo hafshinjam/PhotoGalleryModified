@@ -1,7 +1,6 @@
 package org.maktab.photogallery.view.fragment;
 
 import android.util.Log;
-import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
 

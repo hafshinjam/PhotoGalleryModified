@@ -28,9 +28,9 @@ public class PhotoRepository {
     public static final String TAG = "PhotoRepository";
     private static PhotoRepository sInstance;
 
-    private FlickrService mFlickrService;
-    private MutableLiveData<List<GalleryItem>> mPopularItemsLiveData = new MutableLiveData<>();
-    private MutableLiveData<List<GalleryItem>> mSearchItemsLiveData = new MutableLiveData<>();
+    private final FlickrService mFlickrService;
+    private final MutableLiveData<List<GalleryItem>> mPopularItemsLiveData = new MutableLiveData<>();
+    private final MutableLiveData<List<GalleryItem>> mSearchItemsLiveData = new MutableLiveData<>();
 
     public static PhotoRepository getInstance() {
         if (sInstance == null)
@@ -67,7 +67,7 @@ public class PhotoRepository {
 
             @Override
             public void onFailure(Call<List<GalleryItem>> call, Throwable t) {
-
+                Log.e(TAG, t.getMessage(), t);
             }
         });
     }
